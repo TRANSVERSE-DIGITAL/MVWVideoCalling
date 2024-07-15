@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { useUser } from '@clerk/nextjs';
+import { useEffect, useState } from 'react';
+import { Client, Account } from 'appwrite';
 import { StreamCall, StreamTheme } from '@stream-io/video-react-sdk';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Loader } from 'lucide-react';
 
 import { useGetCallById } from '@/hooks/useGetCallById';
@@ -13,11 +13,30 @@ import MeetingRoom from '@/components/MeetingRoom';
 
 const MeetingPage = () => {
   const { id } = useParams();
-  const { isLoaded, user } = useUser();
-  const { call, isCallLoading } = useGetCallById(id);
+  const router = useRouter();
+  const [user, setUser] = useState(null);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
+  const { call, isCallLoading } = useGetCallById(id);
 
-  if (!isLoaded || isCallLoading) return <Loader />;
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const client = new Client()
+          .setEndpoint('https://appwrite.xeve.dev/v1') // Your API Endpoint
+          .setProject('mvvideocall'); // Your project ID
+
+        const account = new Account(client);
+        const user = await account.get();
+        setUser(user);
+      } catch (error) {
+        router.push('/sign-in');
+      }
+    };
+
+    fetchUser();
+  }, [router]);
+
+  if (isCallLoading) return <Loader />;
 
   if (!call) return (
     <p className="text-center text-3xl font-bold text-white">
@@ -25,8 +44,7 @@ const MeetingPage = () => {
     </p>
   );
 
-  // get more info about custom call type:  https://getstream.io/video/docs/react/guides/configuring-call-types/
-  const notAllowed = call.type === 'invited' && (!user || !call.state.members.find((m) => m.user.id === user.id));
+  const notAllowed = call.type === 'invited' && (!user || !call.state.members.find((m) => m.user.id === user.$id));
 
   if (notAllowed) return <Alert title="You are not allowed to join this meeting" />;
 
@@ -34,12 +52,11 @@ const MeetingPage = () => {
     <main className="h-screen w-full">
       <StreamCall call={call}>
         <StreamTheme>
-
-        {!isSetupComplete ? (
-          <MeetingSetup setIsSetupComplete={setIsSetupComplete} />
-        ) : (
-          <MeetingRoom />
-        )}
+          {!isSetupComplete ? (
+            <MeetingSetup setIsSetupComplete={setIsSetupComplete} />
+          ) : (
+            <MeetingRoom />
+          )}
         </StreamTheme>
       </StreamCall>
     </main>

@@ -1,12 +1,13 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
 import { useStreamVideoClient } from "@stream-io/video-react-sdk";
 import { useRouter } from "next/navigation";
-
+import { Client, Account } from "appwrite";
 import { useGetCallById } from "@/hooks/useGetCallById";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import Loader from "@/components/Loader";
 
 const Table = ({
   title,
@@ -28,19 +29,39 @@ const Table = ({
 };
 
 const PersonalRoom = () => {
+  const [user, setUser] = useState<any>(null);
+  const [meetingId, setMeetingId] = useState<string | null>(null);
+  const [call, setCall] = useState<any>(null);
   const router = useRouter();
-  const { user } = useUser();
-  const client = useStreamVideoClient();
+  const video = useStreamVideoClient();
   const { toast } = useToast();
 
-  const meetingId = user?.id;
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const client = new Client()
+          .setEndpoint('https://appwrite.xeve.dev/v1') // Your Appwrite endpoint
+          .setProject('mvvideocall'); // Your project ID
 
-  const { call } = useGetCallById(meetingId!);
+        const account = new Account(client);
+        const user = await account.get();
+        setUser(user);
+        setMeetingId(user.$id);
+
+        const { call } = await useGetCallById(user.$id);
+        setCall(call);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchUser();
+  }, [router]);
 
   const startRoom = async () => {
-    if (!client || !user) return;
+    if (!video || !user) return;
 
-    const newCall = client.call("default", meetingId!);
+    const newCall = video.call("default", meetingId!);
 
     if (!call) {
       await newCall.getOrCreate({
@@ -53,13 +74,17 @@ const PersonalRoom = () => {
     router.push(`/meeting/${meetingId}?personal=true`);
   };
 
+  if (!user || !meetingId) {
+    return <Loader />;
+  }
+
   const meetingLink = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${meetingId}?personal=true`;
 
   return (
     <section className="flex size-full flex-col gap-10 text-white">
       <h1 className="text-xl font-bold lg:text-3xl">Personal Meeting Room</h1>
       <div className="flex w-full flex-col gap-8 xl:max-w-[900px]">
-        <Table title="Topic" description={`${user?.username}'s Meeting Room`} />
+        <Table title="Topic" description={`${user.name}'s Meeting Room`} />
         <Table title="Meeting ID" description={meetingId!} />
         <Table title="Invite Link" description={meetingLink} />
       </div>
