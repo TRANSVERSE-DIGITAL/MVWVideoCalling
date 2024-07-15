@@ -14,7 +14,7 @@ import MeetingRoom from '@/components/MeetingRoom';
 const MeetingPage = () => {
   const { id } = useParams();
   const router = useRouter();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<any | null>(null);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const { call, isCallLoading } = useGetCallById(id);
 
@@ -29,7 +29,7 @@ const MeetingPage = () => {
         const user = await account.get();
         setUser(user);
       } catch (error) {
-        router.push('/sign-in');
+       console.error(error);
       }
     };
 
