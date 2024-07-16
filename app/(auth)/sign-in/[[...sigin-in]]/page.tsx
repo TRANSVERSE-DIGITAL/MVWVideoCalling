@@ -5,7 +5,7 @@ import { Client, Account } from 'appwrite';
 
 const client = new Client()
   .setEndpoint('https://appwrite.xeve.dev/v1') // Your Appwrite endpoint
-  .setProject('mvvideocall'); // Your project ID
+  .setProject('mvworld'); // Your project ID
 
 const account = new Account(client);
 

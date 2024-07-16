@@ -13,7 +13,7 @@ export const useGetCalls = () => {
       try {
         const appwriteClient = new Client()
           .setEndpoint('https://appwrite.xeve.dev/v1') // Your API Endpoint
-          .setProject('mvvideocall'); // Your project ID
+          .setProject('mvworld'); // Your project ID
 
         const account = new Account(appwriteClient);
         const user = await account.get();
