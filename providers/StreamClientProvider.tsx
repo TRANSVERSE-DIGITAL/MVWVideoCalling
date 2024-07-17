@@ -38,6 +38,9 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
           user: {
             id: user.$id,
             name: user.name || user.$id,
+            custom: {
+              courseId: '2',
+            },
           },
           tokenProvider,
         });
