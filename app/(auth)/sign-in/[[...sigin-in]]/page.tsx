@@ -20,7 +20,7 @@ const SignInPage = () => {
       try {
         const de = await account.get();
         console.log(de);
-        // window.location.href = '/'; // Redirect to home page if already logged in
+        window.location.href = '/'; // Redirect to home page if already logged in
       } catch (err) {
             // Get token and userId from query string
     const urlParams = new URLSearchParams(window.location.search);
