@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Client, Account } from 'appwrite';
 
 const client = new Client()
@@ -13,6 +13,32 @@ const SignInPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if logged in
+    const checkIfLoggedIn = async () => {
+      try {
+        const de = await account.get();
+        console.log(de);
+        // window.location.href = '/'; // Redirect to home page if already logged in
+      } catch (err) {
+            // Get token and userId from query string
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const userId = urlParams.get('userId');
+    console.log(token, userId);
+
+    if (token && userId) {
+      account.createSession(userId, token);
+      window.location.href = '/'; // Redirect to home page if already logged in
+    }
+        // Not logged in
+      }
+    };
+    checkIfLoggedIn();
+
+
+  }, []);
 
   const handleSignIn = async (event: React.FormEvent) => {
     event.preventDefault();
