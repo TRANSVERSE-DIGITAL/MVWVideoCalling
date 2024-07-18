@@ -19,7 +19,6 @@ const SignInPage = () => {
     const checkIfLoggedIn = async () => {
       try {
         const de = await account.get();
-        console.log(de);
         window.location.href = '/'; // Redirect to home page if already logged in
       } catch (err) {
             // Get token and userId from query string
@@ -29,7 +28,7 @@ const SignInPage = () => {
     console.log(token, userId);
 
     if (token && userId) {
-      account.createSession(userId, token);
+      await account.createSession(userId, token);
       window.location.href = '/'; // Redirect to home page if already logged in
     }
         // Not logged in
