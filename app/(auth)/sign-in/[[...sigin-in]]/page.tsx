@@ -18,6 +18,12 @@ const SignInPage = () => {
     // Check if logged in
     const checkIfLoggedIn = async () => {
       try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const userId = urlParams.get('userId');
+        const courseId = urlParams.get('courseId');
+        localStorage.setItem('courseId', courseId ?? '');
+
         const de = await account.get();
         window.location.href = '/'; // Redirect to home page if already logged in
       } catch (err) {
