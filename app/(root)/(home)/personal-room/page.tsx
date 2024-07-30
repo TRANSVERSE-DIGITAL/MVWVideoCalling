@@ -46,10 +46,11 @@ const PersonalRoom = () => {
         const courseId = localStorage.getItem('courseId');
         const account = new Account(client);
         const user = await account.get();
+        const callId = user.$id+'-'+courseId;
         setUser(user);
-        setMeetingId(courseId);
+        setMeetingId(callId);
 
-        const { call } = await useGetCallById(courseId ?? '');
+        const { call } = await useGetCallById(callId ?? '');
         setCall(call);
       } catch (error) {
         console.error(error);
