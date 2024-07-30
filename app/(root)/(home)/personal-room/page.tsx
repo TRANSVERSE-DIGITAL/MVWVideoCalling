@@ -41,14 +41,15 @@ const PersonalRoom = () => {
       try {
         const client = new Client()
           .setEndpoint('https://appwrite.xeve.dev/v1') // Your Appwrite endpoint
-          .setProject('mvworld'); // Your project ID
+          .setProject('metaspheres'); // Your project ID
 
+        const courseId = localStorage.getItem('courseId');
         const account = new Account(client);
         const user = await account.get();
         setUser(user);
-        setMeetingId(user.$id);
+        setMeetingId(courseId);
 
-        const { call } = await useGetCallById(user.$id);
+        const { call } = await useGetCallById(courseId ?? '');
         setCall(call);
       } catch (error) {
         console.error(error);

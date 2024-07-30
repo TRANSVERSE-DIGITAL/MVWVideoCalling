@@ -5,7 +5,7 @@ import { Client, Account } from 'appwrite';
 
 const client = new Client()
   .setEndpoint('https://appwrite.xeve.dev/v1') // Your Appwrite endpoint
-  .setProject('mvworld'); // Your project ID
+  .setProject('metaspheres'); // Your project ID
 
 const account = new Account(client);
 
@@ -25,9 +25,12 @@ const SignInPage = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     const userId = urlParams.get('userId');
+    const courseId = urlParams.get('courseId');
     console.log(token, userId);
 
-    if (token && userId) {
+
+    if (token && userId && courseId) {
+      localStorage.setItem('courseId', courseId);
       await account.createSession(userId, token);
       window.location.href = '/'; // Redirect to home page if already logged in
     }

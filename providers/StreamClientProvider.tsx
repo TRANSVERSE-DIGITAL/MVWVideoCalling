@@ -19,7 +19,7 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
       try {
         const client = new Client()
           .setEndpoint('https://appwrite.xeve.dev/v1') // Your Appwrite endpoint
-          .setProject('mvworld'); // Your project ID
+          .setProject('metaspheres'); // Your project ID
 
         const account = new Account(client);
         const user = await account.get();
