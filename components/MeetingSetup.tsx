@@ -35,6 +35,8 @@ const MeetingSetup = ({
   const [isMicCamToggled, setIsMicCamToggled] = useState(false);
 
   useEffect(() => {
+     call.screenShare.enableScreenShareAudio();
+
     if (isMicCamToggled) {
       call.camera.disable();
       call.microphone.disable();
